@@ -13,10 +13,43 @@
 
     <link rel="stylesheet" type="text/css" href="{% static 'blog/main.css' %}">
 
+    <script
+    src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap&libraries=&v=weekly"
+    defer
+    ></script>
+
+    <style type="text/css">
+      /* Set the size of the div element that contains the map */
+    #map {
+        height: 400px;
+        /* The height is 400 pixels */
+        width: 100%;
+        /* The width is the width of the web page */
+    }
+    </style>
+
+    <script>
+      // Initialize and add the map
+    function initMap() {
+        // The location of Uluru
+        const uluru = { lat: -25.344, lng: 131.036 };
+        // The map, centered at Uluru
+        const map = new google.maps.Map(document.getElementById("map"), {
+            zoom: 4,
+            center: uluru,
+        });
+        // The marker, positioned at Uluru
+        const marker = new google.maps.Marker({
+            position: uluru,
+            map: map,
+        });
+    }
+    </script>
+
     {% if title %}
-    <title>Django Blog - {{ title }}</title>
+    <title>Mobike Blog - {{ title }}</title>
     {% else %}
-    <title>Django Blog</title>
+    <title>Mobike Blog</title>
     {% endif %}
 </head>
 
@@ -24,20 +57,23 @@
     <header class="site-header">
         <nav class="navbar navbar-expand-md navbar-dark bg-steel fixed-top">
             <div class="container">
-                <a class="navbar-brand mr-4" href="/">Django Blog ALO</a>
+                <a class="navbar-brand mr-4" href="/">Mobike Blog</a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggle"
                     aria-controls="navbarToggle" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarToggle">
                     <div class="navbar-nav mr-auto">
-                        <a class="nav-item nav-link" href="{% url 'blog-home' %}">Inicio</a>
+                        <a class="nav-item nav-link" href="{% url 'blog-home' %}">Posts</a>
                         <a class="nav-item nav-link" href="{% url 'blog-about' %}">Sobre nosotros</a>
                     </div>
                     <!-- Navbar Right Side -->
                     <div class="navbar-nav">
                         {% if user.is_authenticated %}
-                            <a class="nav-item nav-link" href="{% url 'post-create' %}">Nuevo Post</a>
+                            {% if user.is_staff or user.is_superuser %}
+                                <a class="nav-item nav-link" target="_blank" href="{% url 'admin:index' %}">Admin</a>
+                            {% endif %}
+                            <a class="nav-item nav-link" href="{% url 'post-create' %}">Agregar Post</a>
                             <a class="nav-item nav-link" href="{% url 'profile' %}">Perfil</a>
                             <a class="nav-item nav-link" href="{% url 'logout' %}">Cerrar sesión</a>
                         {% else %}
@@ -52,7 +88,7 @@
 
     <main role="main" class="container">
         <div class="row">
-            <div class="col-md-8">
+            <div class="col-md-12">
                 {% if messages %}
                     {% for message in messages %}
                         <div class="alert alert-{{ message.tags }}">
@@ -61,22 +97,35 @@
                     {% endfor %}
                 {% endif %}
                 {% block content %}{% endblock %}
-            </div>
-            <div class="col-md-4">
-                <div class="content-section">
-                    <h3>Barra lateral</h3>
-                    <p class='text-muted'>Información importante
-                    <ul class="list-group">
-                        <li class="list-group-item list-group-item-light">Ultimos posts</li>
-                        <li class="list-group-item list-group-item-light">Anuncios</li>
-                        <li class="list-group-item list-group-item-light">Calendario</li>
-                        <li class="list-group-item list-group-item-light">etc</li>
-                    </ul>
-                    </p>
-                </div>
-            </div>
         </div>
     </main>
+
+    <footer class="footer">
+		<div class="container-fluid padding bg-steel">
+			<div class="row text-center">
+				<div class="col-md-4">
+					<hr color="white">
+					<p class="txt-footer">mobike@gmail.com</p>
+					<p class="txt-footer">Padre Alonso de Ovalle 868</p>
+					<p class="txt-footer">Santiago, 8320000</p>
+                    <hr color="white">
+				</div>
+				<div class="col-md-4 hide-header">
+					<hr  color="white">
+					<h5 class="txt-footer">Horario de contacto</h5>
+					<hr color="white">
+					<p class="txt-footer">Lun-Vie: 7am - 11pm</p>
+					<p class="txt-footer">Sabado: 7am - 10pm</p>
+					<p class="txt-footer">Domingo: 7am - 9pm</p>
+				</div>
+				<div class="col-md-4 hide-header">
+					<hr color="white">
+					<button class="btn btn-success" type="submit">Servicio al Cliente</button>
+					<hr class="linea-horizontal" color="white">
+				</div>
+			</div>
+		</div>
+	</footer>
 
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
